@@ -279,7 +279,7 @@ class wss_app():
                             self.fcoin.cancel_order(self.buy_order_id)
                             self._log.info('%s秒超时撤单' % config.delay)
         else:
-            self._log.info('断开……')
+            self._log.info('等待WebSocket数据……')
 
     #循环
     def loop(self):

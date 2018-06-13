@@ -4,6 +4,12 @@
 #@Author  : Nogo
 
 
+#秘钥
+key = '0000'
+secret = '0000'
+
+
+#精度和最小挂单量
 btc = {'name': 'btcusdt', 'coin': 'btc', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
 ltc = {'name': 'ltcusdt', 'coin': 'ltc', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
 eth = {'name': 'ethusdt', 'coin': 'eth', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
@@ -11,15 +17,7 @@ etc = {'name': 'etcusdt', 'coin': 'etc', 'price_precision': 2, 'amount_precision
 ft = {'name': 'ftusdt', 'coin': 'ft', 'price_precision': 2, 'amount_precision': 0, 'min_amount': 1}
 btm = {'name': 'btmusdt', 'coin': 'btm', 'price_precision': 2, 'amount_precision': 1, 'min_amount': 1}
 
-
-#买单超时(s)
-delay = 20
-
-#秘钥
-key = '0000'
-secret = '0000'
-
-#交易对
+#交易对，仅支持以上USDT交易对
 symbol = ltc
 
 #抱团模式：固定价格刷单(等于0就是市价，大于0固定该价格)
@@ -29,12 +27,12 @@ fix_price = 100.04
 diff_price = 0.02
 
 #★买卖深度前3挂单数量总和
-total_amount = 5000
+total_amount = 100
 
-#当★满足时的挂单量
-max_amount = 0.5
+#当★满足时的买入挂单量,如果梭哈刷设置个很大的值
+max_amount = 10
 
-#当★不满足时的挂单量
+#当★不满足时的买入挂单量
 min_amount = 0.5
 
 #持仓币种最大量
@@ -42,4 +40,8 @@ limit_amount = 3
 
 #暂时无用
 ft_base_amount = 0
+
+#买单超时(s)
+delay = 20
+
 
