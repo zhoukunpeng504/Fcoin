@@ -217,11 +217,11 @@ class wss_app():
                 self.dic_balance = self.get_blance()
 
                 '''
-                判断大饼持仓量，到设定值停止买入。
+                判断币种持仓量，到设定值停止买入。
                 '''
                 coin = self.dic_balance[config.symbol['coin']]
                 if coin and coin.balance > config.limit_amount:
-                    self._log.info('btc余额度达到最大值[%s]' % coin.balance)
+                    self._log.info('%s余额度达到最大值[%s]' % (config.symbol['coin'],coin.balance))
                     return
                 '''
                 挂买单
