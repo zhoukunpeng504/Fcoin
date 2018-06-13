@@ -1,6 +1,10 @@
 # Fcoin
 fcoin
 
+交流Q群：323612166
+
+不定时在LTC\ETC等次热梦币种抱团
+
 依赖库:
 
 requests
