@@ -3,6 +3,8 @@
 #@TIME    : 2018/6/11/0011 10:17
 #@Author  : Nogo
 
+import key_store
+
 btc = {'name': 'btcusdt', 'coin': 'btc', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
 ltc = {'name': 'ltcusdt', 'coin': 'ltc', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
 eth = {'name': 'ethusdt', 'coin': 'eth', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
@@ -15,8 +17,8 @@ btm = {'name': 'btmusdt', 'coin': 'btm', 'price_precision': 2, 'amount_precision
 delay = 20
 
 #秘钥
-key = '13333'
-secret = '23333'
+key = key_store.key
+secret = key_store.secret
 
 #交易对
 symbol = ltc
