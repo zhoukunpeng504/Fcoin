@@ -130,6 +130,7 @@ class wss_app():
             close_array = np.array([item['close'] for item in self.candle_list])
             self.SMA = talib.SMA(close_array, timeperiod=7)
 
+    #市价
     def ticker(self, data):
         self.ts = time.time()
         self.market_price = data['ticker'][0]
@@ -252,7 +253,7 @@ class wss_app():
                     self._log.info('查询余额错误')
             else:
                 '''
-                买单ID存在是查询订单状态
+                买单ID存在时查询订单状态
                 '''
                 success, data = self.fcoin.get_order(self.buy_order_id)
                 if success:
