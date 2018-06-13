@@ -4,4 +4,4 @@
 #@Author  : Nogo
 
 key = '1'
-secret = '2'
+secret = '2222'
