@@ -11,6 +11,7 @@ secret = '0000'
 
 #精度和最小挂单量
 btc = {'name': 'btcusdt', 'coin': 'btc', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
+bch = {'name': 'bchusdt', 'coin': 'bch', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
 ltc = {'name': 'ltcusdt', 'coin': 'ltc', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
 eth = {'name': 'ethusdt', 'coin': 'eth', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
 etc = {'name': 'etcusdt', 'coin': 'etc', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}

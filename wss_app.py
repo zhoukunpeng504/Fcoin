@@ -206,7 +206,7 @@ class wss_app():
                         last = self.SMA[-2]
                         if not np.isnan(last):
                             if abs(self.buy_price - last) >= 0.5:
-                                self._log.info('价格异动波动:%s' % abs(self.buy_price - last))
+                                self._log.info('价格异动:%s' % abs(self.buy_price - last))
                                 return
 
                 '''
