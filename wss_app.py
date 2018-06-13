@@ -26,7 +26,6 @@ class wss_app():
         self.client.stream.stream_ticker.subscribe(self.ticker)
         self.fcoin = Fcoin()
         self.fcoin.auth(config.key, config.secret)
-        self.db = mongodb()
 
         self.buy_price = None               #买1价
         self.buy_amount = None              #买1量
