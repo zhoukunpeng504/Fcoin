@@ -16,8 +16,8 @@ btm = {'name': 'btmusdt', 'coin': 'btm', 'price_precision': 2, 'amount_precision
 delay = 20
 
 #秘钥
-key = ''
-secret = ''
+key = '0000'
+secret = '0000'
 
 #交易对
 symbol = ltc
