@@ -15,7 +15,6 @@ from threading import Thread
 from fcoin import Fcoin
 from WSS.fcoin_client import fcoin_client
 from balance import balance
-from db import mongodb
 import config
 
 class wss_app():
