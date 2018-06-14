@@ -1,6 +1,7 @@
 import websocket
 import logging
 import time
+import datetime
 from threading import Thread, Event
 
 class Connection(Thread):
@@ -28,6 +29,7 @@ class Connection(Thread):
         self.isConnected = Event()
         self._disconnecte_required = Event()
         self._reconnect_required = Event()
+        self._lastReceiveTime = datetime.datetime.now()
 
         self._log = None
         self._init_log(log_level)
@@ -102,8 +104,10 @@ class Connection(Thread):
         self._reconnect_required.set()
         if self._onOpen:
             self._onOpen()
+        self._startCheckDataTimer()
 
     def _on_message(self, ws, message):
+        self._lastReceiveTime = datetime.datetime.now()
         if self._onMessage:
             self._onMessage(message)
 
@@ -118,3 +122,17 @@ class Connection(Thread):
         self.isConnected.clear()
         if self._onError:
             self._onError(error)
+
+    def _lastChance(self):
+        span = (datetime.datetime.now() - self._lastReceiveTime).total_seconds()
+        if span >= 10:
+            self._socket.close()
+
+    def _loop(self):
+        while self.isConnected.is_set():
+            time.sleep(1)
+            self._lastChance()
+
+    def _startCheckDataTimer(self):
+        self._checkDataThread = Thread(target=self._loop, name='CheckData ' + self.name)
+        self._checkDataThread.start()
