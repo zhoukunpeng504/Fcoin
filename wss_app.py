@@ -212,7 +212,7 @@ class wss_app():
                 '''
                 查询余额度
                 '''
-                self.dic_balance = self.get_blance()
+                self.dic_balance = self.get_balance()
 
                 '''
                 判断币种持仓量，到设定值停止买入。
@@ -297,13 +297,13 @@ class wss_app():
             time.sleep(0.5)
 
     #获取余额
-    def get_blance(self):
-        dic_blance = defaultdict(lambda: None)
+    def get_balance(self):
+        dic_balance = defaultdict(lambda: None)
         success, data = self.fcoin.get_balance()
         if success:
             for item in data['data']:
-                dic_blance[item['currency']] = balance(float(item['available']), float(item['frozen']),float(item['balance']))
-        return dic_blance
+                dic_balance[item['currency']] = balance(float(item['available']), float(item['frozen']),float(item['balance']))
+        return dic_balance
 
     #获取订单
     def get_orders(self, symbol, states, limit=1):
