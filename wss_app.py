@@ -136,7 +136,7 @@ class wss_app():
     #刷单流程
     def process(self):
 
-        if self.ts and time.time() - self.ts < 10:
+        if self.ts and time.time() - self.ts < 10 and self.buy_price and self.market_price:
             price = self.market_price if config.fix_price == 0 else config.fix_price
             amount = 0
 
@@ -238,7 +238,7 @@ class wss_app():
                     else:
                         amount = usdt.available/price
                     amount = self.digits(amount, config.symbol['amount_precision'])
-                    if amount > config.symbol['min_amount']:
+                    if amount >= config.symbol['min_amount']:
                         price = self.digits(price, config.symbol['price_precision'])
                         success, data = self.fcoin.buy(config.symbol['name'], price, amount)  # 买
                         if success:
@@ -283,6 +283,10 @@ class wss_app():
     #循环
     def loop(self):
 
+        if config.min_amount < config.symbol['min_amount'] or config.min_amount < config.symbol['min_amount']:
+            self._log.info('max_amount,min_amount ≥ 规定的最小数量[%s]' % (config.symbol['min_amount']))
+            return
+
         self.client.start()
 
         while not self.client.isConnected:
@@ -293,7 +297,10 @@ class wss_app():
         self.client.subscribe_candle(config.symbol['name'], 'M1')
         self.client.subscribe_ticker(config.symbol['name'])
         while True:
-            self.process()
+            try:
+                self.process()
+            except Exception as error:
+                self._log.info('未知错误')
             time.sleep(0.5)
 
     #获取余额
