@@ -15,8 +15,8 @@ bch = {'name': 'bchusdt', 'coin': 'bch', 'price_precision': 2, 'amount_precision
 ltc = {'name': 'ltcusdt', 'coin': 'ltc', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
 eth = {'name': 'ethusdt', 'coin': 'eth', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
 etc = {'name': 'etcusdt', 'coin': 'etc', 'price_precision': 2, 'amount_precision': 4, 'min_amount': 0.001}
-ft = {'name': 'ftusdt', 'coin': 'ft', 'price_precision': 2, 'amount_precision': 0, 'min_amount': 1}
-btm = {'name': 'btmusdt', 'coin': 'btm', 'price_precision': 2, 'amount_precision': 1, 'min_amount': 1}
+ft = {'name': 'ftusdt', 'coin': 'ft', 'price_precision': 6, 'amount_precision': 0, 'min_amount': 1}
+btm = {'name': 'btmusdt', 'coin': 'btm', 'price_precision': 4, 'amount_precision': 1, 'min_amount': 1}
 
 #交易对，仅支持以上USDT交易对
 symbol = ltc
