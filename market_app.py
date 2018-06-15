@@ -149,15 +149,18 @@ class market_app():
         else:
             self.market_trade_list = [price]
 
-        if len(self.market_trade_list) > 50:
+        if len(self.market_trade_list) > 100:
             self.market_trade_list.pop(0)
 
 
     # 刷单流程
     def process(self):
 
-        if self.ts and time.time() - self.ts < 10 and len(self.market_trade_list) >= 50 and self.market_price:
+        if self.market_trade_list and len(self.market_trade_list) < 100:
+            self._log.info('成交数据[%s]' % (len(self.market_trade_list)))
+            return
 
+        if self.ts and time.time() - self.ts < 10 and self.market_price:
 
             price = self.market_price if config.fix_price == 0 else config.fix_price
             amount = 0
