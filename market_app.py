@@ -328,7 +328,7 @@ class market_app():
 
 
 if __name__ == '__main__':
-    run = wss_app()
+    run = market_app()
     thread = Thread(target=run.loop)
     thread.start()
     thread.join()
