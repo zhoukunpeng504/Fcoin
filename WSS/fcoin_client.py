@@ -36,7 +36,8 @@ class fcoin_client(object):
         self._response_handlers = {}
         self._data_handlers = {'depth': self.stream.raiseDepth,
                                'candle': self.stream.raiseKline,
-                               'ticker': self.stream.raiseTicker}
+                               'ticker': self.stream.raiseTicker,
+                               'trade': self.stream.raiseMarketTrades}
 
     @property
     def isConnected(self):
@@ -100,6 +101,10 @@ class fcoin_client(object):
 
     def subscribe_candle(self, symbol, resolution):
         channel = 'candle.%(resolution)s.%(symbol)s' % {'symbol': symbol, 'resolution': resolution}
+        self._subscribe(channel)
+
+    def subscribe_trade(self, symbol):
+        channel = 'trade.%(symbol)s' % {'symbol': symbol}
         self._subscribe(channel)
 
     def _system_handler(self, data):

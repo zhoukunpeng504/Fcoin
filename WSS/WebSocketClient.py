@@ -125,7 +125,7 @@ class Connection(Thread):
 
     def _lastChance(self):
         span = (datetime.datetime.now() - self._lastReceiveTime).total_seconds()
-        if span >= 10:
+        if span >= 30:
             self._socket.close()
 
     def _loop(self):
