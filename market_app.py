@@ -284,7 +284,7 @@ class market_app():
     # 循环
     def loop(self):
 
-        if config.min_amount < config.symbol['min_amount'] or config.min_amount < config.symbol['min_amount']:
+        if config.max_amount < config.symbol['min_amount'] or config.min_amount < config.symbol['min_amount']:
             self._log.info('max_amount,min_amount ≥ 规定的最小数量[%s]' % (config.symbol['min_amount']))
             return
 
