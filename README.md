@@ -8,13 +8,13 @@ fcoin
 
 依赖库:
 
-requests
+pip3 install requests
 
-websocket_client
+pip3 install websocket_client==0.47.0
 
-numpy
+pip3 install numpy
 
-talib
+pip3 install TA_Lib    （如果安装问题，群共享有编译好的库文件直接解压到python个目录\Lib\site-packages下）
 
 文件说明：
 
