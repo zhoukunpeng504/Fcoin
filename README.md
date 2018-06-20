@@ -14,7 +14,7 @@ pip3 install websocket_client==0.47.0
 
 pip3 install numpy
 
-pip3 install TA_Lib    （如果安装问题，群共享有编译好的库文件直接解压到python个目录\Lib\site-packages下）
+pip3 install TA_Lib    （如果安装问题，群共享有编译好的库文件直接解压到python根目录\Lib\site-packages下）
 
 文件说明：
 
