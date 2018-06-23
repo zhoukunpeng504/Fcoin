@@ -231,7 +231,7 @@ class market_app():
                     amount = float(data['data']['filled_amount']) - float(data['data']['fill_fees'])
                     price = float(data['data']['price'])
 
-                    if amount > 0 and state in ('filled', 'partial_canceled'):
+                    if amount > 0 and state in ('filled', 'partial_filled'):
                         self.filled_buy_order_list.append({'price': price, 'amount': amount})
 
                     if state == 'filled':
