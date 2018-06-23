@@ -9,9 +9,7 @@ python版本：
 
 依赖库:
 
-pip install requests
-
-pip install websocket_client==0.47.0
+pip install -r requirements.txt
 
 
 
