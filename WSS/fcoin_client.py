@@ -5,8 +5,8 @@
 
 import logging
 import json
-from WSS.WebSocketClient import Connection
-from WSS.stream import stream
+from WebSocketClient import Connection
+from stream import stream
 log = logging.getLogger(__name__)
 
 def is_connected(func):
@@ -34,9 +34,9 @@ class fcoin_client(object):
         self.channel_config = []
         self.channel_directory = {}
         self._response_handlers = {}
-        self._data_handlers = {'depth': self.stream.raiseDepth,
+        self._data_handlers = {'depth': self.stream.raiseDepth,       # 深度查询
                                'candle': self.stream.raiseKline,
-                               'ticker': self.stream.raiseTicker,
+                               'ticker': self.stream.raiseTicker,     # 行情
                                'trade': self.stream.raiseMarketTrades}
 
     @property
@@ -114,23 +114,23 @@ class fcoin_client(object):
         # {"id":"1","type":"topics","topics":["depth.L20.btcusdt"]}
         # {"id":"1","type":"topics","topics":["depth.L20.btcusdt","ticker.btcusdt"]}
         for item in data:
-            channel, *_ = item.split('.')
+            channel = item.split('.')[0]
             if channel:
                 self.channel_directory[channel] = self._data_handlers[channel]
 
     def _data_handler(self, type, data):
         try:
-            channel, *_ = type.split('.')
+            channel = type.split('.')[0]
             self.channel_directory[channel](data)
         except KeyError:
             pass
 
-def t(data):
+def t(data): #订阅数据回调函数
     print(data)
 
 if __name__ == '__main__':
     c = fcoin_client()
-    c.stream.stream_depth.subscribe(t)
+    c.stream.stream_depth.subscribe(t) #订阅
     c.start()
     import time
     time.sleep(5)

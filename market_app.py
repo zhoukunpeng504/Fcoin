@@ -4,8 +4,6 @@
 
 import math
 import time
-import talib
-import numpy as np
 import logging
 from collections import defaultdict
 from threading import Thread
@@ -14,7 +12,9 @@ from fcoin import Fcoin
 from WSS.fcoin_client import fcoin_client
 from balance import balance
 import config
-
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 class market_app():
     '''
@@ -30,8 +30,8 @@ class market_app():
         self.client = fcoin_client()
         #self.client.stream.stream_depth.subscribe(self.depth)
         #self.client.stream.stream_klines.subscribe(self.candle)
-        self.client.stream.stream_ticker.subscribe(self.ticker)
-        self.client.stream.stream_marketTrades.subscribe(self.trade)
+        self.client.stream.stream_ticker.subscribe(self.ticker)      # 订阅市价数据 ，数据写入到self.market_price
+        self.client.stream.stream_marketTrades.subscribe(self.trade) # 订阅交易数据，数据写入到self.market_trade_list
         self.fcoin = Fcoin()
         self.fcoin.auth(config.key, config.secret)
 
@@ -47,14 +47,13 @@ class market_app():
         self.total_asks = 0
 
         self.filled_buy_order_list = []
-        self.order_list = defaultdict(lambda: None)
+        self.order_list = defaultdict(lambda: None)  #所有订单
         self.buy_order_id = None
         self.dic_balance = defaultdict(lambda: None)
         self.time_order = time.time()
 
         self.price_list = []
         self.candle_list = []
-        self.SMA = None
         self._init_log()
 
 
@@ -87,60 +86,13 @@ class market_app():
         tmp = math.floor(tmp) / site
         return tmp
 
-    # wss订阅深度接收
-    def depth(self, data):
-        bids = data['bids']
-        asks = data['asks']
-
-        self.ts = time.time()
-
-        self.buy_price = bids[0]  # 买
-        self.buy_amount = bids[1]
-        self.sell_price = asks[0]  # 卖
-        self.sell_amount = asks[1]
-
-        for i in range(3):
-            self.total_bids += bids[2 * i - 1]
-            self.total_asks += asks[2 * i - 1]
-
-    # wss订阅K线接收
-    def candle(self, data):
-        if len(self.candle_list) == 0:
-            self.candle_list = [{'timestamp': data['id'],
-                                 'open': data['open'],
-                                 'high': data['high'],
-                                 'low': data['low'],
-                                 'close': data['close'],
-                                 'volume': data['base_vol']}]
-        else:
-            last_candle = self.candle_list[-1]
-            if last_candle['timestamp'] == data['id']:
-                self.candle_list[-1] = {'timestamp': data['id'],
-                                        'open': data['open'],
-                                        'high': data['high'],
-                                        'low': data['low'],
-                                        'close': data['close'],
-                                        'volume': data['base_vol']}
-            else:
-                self.candle_list.append({'timestamp': data['id'],
-                                         'open': data['open'],
-                                         'high': data['high'],
-                                         'low': data['low'],
-                                         'close': data['close'],
-                                         'volume': data['base_vol']})
-
-            if len(self.candle_list) > 10:
-                self.candle_list.pop(0)
-
-        if len(self.candle_list) > 7:
-            close_array = np.array([item['close'] for item in self.candle_list])
-            self.SMA = talib.SMA(close_array, timeperiod=7)
 
     # 市价
     def ticker(self, data):
         self.ts = time.time()
         self.market_price = data['ticker'][0]
 
+    # 交易
     def trade(self, data):
         self.ts = time.time()
         price = float(data['price'])
@@ -161,15 +113,14 @@ class market_app():
             return
 
         if self.ts and time.time() - self.ts < 10 and self.market_price:
+            # 如果当前大盘数据已更新，且更新时间在10秒内，且，查询到大盘价格
 
-            price = self.market_price if config.fix_price == 0 else config.fix_price
-            amount = 0
-
+            price = self.market_price if config.fix_price == 0 else config.fix_price #交易价格
             '''
-            挂卖单
+            从待下单列表中， 逐个尝试挂卖单
             '''
-            success_item_list = []
-            for item in self.filled_buy_order_list:
+            success_item_list = []   # 成功挂出的订单
+            for item in self.filled_buy_order_list:  # 尝试对卖单进行挂出
                 amount = self.digits(item['amount'], config.symbol['amount_precision'])
                 price = self.digits(max(item['price'], price), config.symbol['price_precision'])
                 order = [amount, price]
@@ -180,8 +131,9 @@ class market_app():
                         self.order_list[data['data']] = order
                         self._log.info('挂卖单成功[%s:%s]' % (amount, price))
 
+
             '''
-            删除已成功订单
+            从待下单列表中，删除已成功挂出去的卖单
             '''
             for item in success_item_list:
                 self.filled_buy_order_list.remove(item)
@@ -196,6 +148,9 @@ class market_app():
                     elif state in ('partial_canceled', 'canceled'):
                         keys.append([1, key])
 
+            '''
+            打印卖单的状态
+            '''
             for tag, key in keys:
                 self.order_list.pop(key)
                 if tag == 0:
@@ -203,8 +158,9 @@ class market_app():
                 else:
                     self._log.info('已经撤单：' + key)
 
+
             '''
-            买单不存在时
+            不存在已下单的买单。
             '''
             if not self.buy_order_id:
                 '''
@@ -219,8 +175,9 @@ class market_app():
                 if coin and coin.balance > config.limit_amount:
                     self._log.info('%s余额度达到最大值[%s]' % (config.symbol['coin'], coin.balance))
                     return
+
                 '''
-                挂买单
+                如果未到设定值，尝试挂买单
                 '''
                 usdt = self.dic_balance['usdt']
                 if usdt:
@@ -229,30 +186,44 @@ class market_app():
                     tmp_list.sort()
                     avg = sum(tmp_list[10:-10])/(len(tmp_list)-20)
                     diff = abs(avg - self.market_price)
+                    '''
+                    如果当前市场价格的平均值 大于设定值，则不下单
+                    '''
                     if config.diff_price < diff:
                         self._log.info('固定价格模式差价异常[%-0.2f]' % diff)
                         return
 
+                    '''
+                    否则， 下单
+                    '''
+                    # 如果不固定价格，则按照市价，如果固定就按照固定价
                     price = self.market_price if config.fix_price == 0 else config.fix_price
+
+                    # 根据余额  及 价格，计算下单量
                     if usdt.available > price * config.max_amount:
                         amount = config.max_amount if self.total_bids > config.total_amount and self.total_asks > config.total_amount else config.min_amount
                     else:
                         amount = usdt.available / price
+
+                    # 小数点精度处理
                     amount = self.digits(amount, config.symbol['amount_precision'])
+
+                    # 如果本次下单量大于配置中的最小交易量，则进行交易
                     if amount >= config.symbol['min_amount']:
                         price = self.digits(price, config.symbol['price_precision'])
                         success, data = self.fcoin.buy(config.symbol['name'], price, amount)  # 买
                         if success:
                             self.time_order = time.time()
-                            self.buy_order_id = data['data']
+                            self.buy_order_id = data['data']  # 记录买单的ID
                             self._log.info('挂买单成功[%s:%s]' % (amount, price))
+                    # 否则，不交易，并记录LOG
                     else:
                         self._log.info('usdt不足[%s]' % (usdt.available))
                 else:
                     self._log.info('查询余额错误')
             else:
                 '''
-                买单ID存在时查询订单状态
+                存在已下单的买单， 查询订单状态
                 '''
                 success, data = self.fcoin.get_order(self.buy_order_id)
                 if success:
@@ -273,7 +244,7 @@ class market_app():
 
                     elif state not in ('pending_cancel'):
                         '''
-                        超时判断
+                        买单 超时， 尝试撤单。
                         '''
                         if time.time() - self.time_order >= config.delay:
                             self.fcoin.cancel_order(self.buy_order_id)
@@ -281,13 +252,15 @@ class market_app():
         else:
             self._log.info('等待WebSocket数据……')
 
-    # 循环
+    # 主循环
     def loop(self):
 
+        #配置检查，如果最大挂单量 小于 币种配置最小挂单量  或者最小挂单量小于币种配置最小挂单量，认为配置错误
         if config.max_amount < config.symbol['min_amount'] or config.min_amount < config.symbol['min_amount']:
             self._log.info('max_amount,min_amount ≥ 规定的最小数量[%s]' % (config.symbol['min_amount']))
             return
-
+        # 开始运行
+        # 连接到wss服务器
         self.client.start()
 
         while not self.client.isConnected:
@@ -296,6 +269,8 @@ class market_app():
 
         #self.client.subscribe_depth(config.symbol['name'], 'L20')
         #self.client.subscribe_candle(config.symbol['name'], 'M1')
+
+        # 订阅特定币种 价格 及交易信息
         self.client.subscribe_ticker(config.symbol['name'])
         self.client.subscribe_trade(config.symbol['name'])
         while True:
@@ -315,19 +290,19 @@ class market_app():
                                                         float(item['balance']))
         return dic_balance
 
-    # 获取订单
-    def get_orders(self, symbol, states, limit=1):
-        '''
-        :param symbol:
-        :param states: submitted/partial_filled/partial_canceled/canceled/pending_cancel/filled
-        :return:
-        '''
-        success, data = self.fcoin.list_orders(symbol=symbol, states=states, limit=limit)
-        if success:
-            return data['data']
-        else:
-            print(data)
-            return None
+    # # 获取订单
+    # def get_orders(self, symbol, states, limit=1):
+    #     '''
+    #     :param symbol:
+    #     :param states: submitted/partial_filled/partial_canceled/canceled/pending_cancel/filled
+    #     :return:
+    #     '''
+    #     success, data = self.fcoin.list_orders(symbol=symbol, states=states, limit=limit)
+    #     if success:
+    #         return data['data']
+    #     else:
+    #         print(data)
+    #         return None
 
 
 if __name__ == '__main__':

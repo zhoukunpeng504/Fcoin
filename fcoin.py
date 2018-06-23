@@ -19,8 +19,8 @@ class Fcoin():
         self.base_url = base_url
 
     def auth(self, key, secret):
-        self.key = bytes(key,'utf-8')
-        self.secret = bytes(secret, 'utf-8')
+        self.key = key
+        self.secret = secret
 
 
     def public_request(self, method, api_url, **payload):

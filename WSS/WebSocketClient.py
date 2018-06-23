@@ -1,3 +1,4 @@
+#coding:utf-8
 import websocket
 import logging
 import time
@@ -8,7 +9,6 @@ class Connection(Thread):
 
     def __init__(
             self,
-            *arge,
             url,
             onOpen=None,
             onMessage=None,
@@ -16,6 +16,7 @@ class Connection(Thread):
             onError=None,
             log_level=None,
             reconnect_interval=30,
+            *args,
             **kwargs):
 
         self._url = url
