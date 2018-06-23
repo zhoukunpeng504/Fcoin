@@ -4,7 +4,7 @@ fcoin
 
 python版本：
 
-2.x
+2.6.x    2.7.x
 
 
 依赖库:
