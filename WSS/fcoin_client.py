@@ -68,9 +68,11 @@ class fcoin_client(object):
         else:
             pass
     def _onClose(self):
+        print "has cossed"
         pass
 
     def _onError(self, errorMsg):
+        print "error",errorMsg
         pass
 
     @is_connected
@@ -134,7 +136,7 @@ if __name__ == '__main__':
     c.start()
     import time
     time.sleep(5)
-    c.subscribe_depth('btcusdt','L20')
+    c.subscribe_trade('ftusdt')
 
     while 1:
         pass

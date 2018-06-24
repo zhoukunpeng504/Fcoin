@@ -12,7 +12,7 @@ from collections import defaultdict
 from threading import Thread
 
 
-from fcoin import Fcoin
+from WSS.fcoin import Fcoin
 from WSS.fcoin_client import fcoin_client
 from balance import balance
 import config

@@ -4,9 +4,7 @@
 #@Author  : Nogo
 
 
-
-class balance(object):
-
+class Balance(object):
     def __init__(self, available, frozen, balance):
         self._available = available
         self._frozen = frozen
