@@ -14,6 +14,8 @@ from balance import balance
 import config
 import sys
 import traceback
+import copy
+
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
@@ -183,7 +185,7 @@ class market_app():
                 usdt = self.dic_balance['usdt']
                 if usdt:
 
-                    tmp_list = self.market_trade_list.copy()
+                    tmp_list = copy.deepcopy(self.market_trade_list)
                     tmp_list.sort()
                     avg = sum(tmp_list[10:-10])/(len(tmp_list)-20)
                     diff = abs(avg - self.market_price)
