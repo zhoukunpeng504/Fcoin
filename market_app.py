@@ -179,7 +179,7 @@ class AutoMarket(object):
                     self.buy_order_id = None
                     self._log.info('买单已成交')
 
-                if state == "partial_filled":
+                elif state == "partial_filled":
                     self._log.info('买单已部分成交')
 
                 elif state == 'canceled' or state == 'partial_canceled':
