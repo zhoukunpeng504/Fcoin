@@ -5,8 +5,8 @@
 
 
 #秘钥
-key = 'ca5ebbf96d8246e2b446ffccd6b3dadf'
-secret = '41f1d72cda2245b3b288f6f76a864d1f'
+key = ''
+secret = ''
 
 
 #精度和每次挂单量，如果amount为0， 则为梭哈， 一单卖完 一单买完的套路
