@@ -13,6 +13,7 @@ from WSS.fcoin_client import fcoin_client
 from balance import balance
 import config
 import sys
+import traceback
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
@@ -277,6 +278,8 @@ class market_app():
             try:
                 self.process()
             except Exception as error:
+                print str(error)
+                traceback.print_exc()
                 self._log.info('未知错误')
             time.sleep(1)
 
