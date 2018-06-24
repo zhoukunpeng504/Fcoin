@@ -64,7 +64,7 @@ class Fcoin():
         elif method == 'POST':
             sig_str = method + full_url + timestamp + param
 
-        signature = self.get_signed(bytes(sig_str, 'utf-8'))
+        signature = self.get_signed(sig_str.encode("utf08") if isinstance(sig_str,unicode) else sig_str)
 
         headers = {
             'FC-ACCESS-KEY': self.key,
